@@ -23,6 +23,7 @@ namespace multiples_finder
         {
             int number = int.Parse(numberBox.Text);
             num1 = Math.Sqrt(number);
+            //Useless If always returns true
             if (num1 % 1 == 0)
             {
                 Double num2 = num1;
@@ -45,17 +46,29 @@ namespace multiples_finder
                         count++;
                     }
                 }
+
+                int diff = multiples[0,0] - multiples[0,1];
+                int[] bestPair = new int[2];
+                bestPair[0] = multiples[0, 0];
+                bestPair[1] = multiples[0, 1];
                 int bound0 = multiples.GetUpperBound(0);
                 int bound1 = multiples.GetUpperBound(1);
-                for (int i = 0; i <= bound0; i++)
+                for (int i = 0; i <= multiples.GetLength(0) -1; i++)
                 {
-                    for (int j = 0; j <= bound1; j++)
+                     int diffCur = multiples[i, 0] - multiples[i, 1];
+                    if(diffCur < diff)
                     {
-                        Console.WriteLine(multiples[i, j]);
+                        bestPair[0] = multiples[i, 0];
+                        bestPair[1] = multiples[i, 1];
                     }
-                    Console.WriteLine();
                 }
+                equasionBox.Text = bestPair[0] + " x " + bestPair[1];
             }
+        }
+
+        private void Form1_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }
