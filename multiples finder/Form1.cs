@@ -70,5 +70,10 @@ namespace multiples_finder
         {
 
         }
+
+        private void ExitToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            this.Close();
+        }
     }
 }
