@@ -17,51 +17,76 @@ namespace multiples_finder
             InitializeComponent();
         }
 
-        public double num1 { get; private set; }
-
         private void CalculateButton_Click(object sender, EventArgs e)
         {
             int number = int.Parse(numberBox.Text);
-            num1 = Math.Sqrt(number);
-            //Useless If always returns true
+            double num1 = Math.Sqrt(number);
+            // Double returns square root, this checks to see if number is a perfect square
             if (num1 % 1 == 0)
             {
-                Double num2 = num1;
-                equasionBox.Text = num1.ToString() + " x " + num2.ToString();
+                equasionBox.Text = num1.ToString() + " x " + num1.ToString();
             }
             else
             {
-                int[,] multiples = new int[number*number, 2];
-                int count = 0;
-                for (int i = 1; i <= Math.Sqrt(number); i++)
+
+                /* Overview of Algorithm
+                 * Start at the closest possible pair of numbers, the square root who have a difference of 0.
+                 * If there is no integer square root, slowly increase the difference between the two numbers
+                 *     If the two numbers multiply to a larger number:
+                 *         decrease the first number.
+                 *     otherwise, if they're too small:
+                 *         increase the second number.
+                 *     if they multiply to the target:
+                 *         stop, we have the answer.
+                 *
+                 * The algorithm can immediately stop once it has found two numbers that multiply to the target.
+                 * With each time through the loop, the difference between the numbers gets larger and larger each time.
+                 * If there were a pair of numbers that are closer together then we would have found them already.
+                 */
+
+                /* Example
+                 * Target Number = 117
+                 * sqrt(117) ~= 10.8 which is converted to 10
+                 * Set Num1 = 10
+                 * Set Num2 = 10
+                 * Num1 * Num2 = 100 < 117
+                 * Num2 = Num2 + 1 = 11
+                 * Num1 * Num2 = 110 < 117
+                 * Num2 = Num2 + 1 = 12
+                 * Num1 * Num2 = 120 > 117
+                 * Num1 = Num1 - 1 = 9
+                 * Num1 * Num2 = 108 < 117
+                 * Num2 = Num2 + 1 = 13
+                 * Num1 * Num2 = 117
+                 * Done.
+                 * Num1 = 9, Num2 = 13
+                 */
+
+                // start the best pair at the square root (converts the double into an integer)
+                int[] bestPair = { (int)num1, (int)num1 };
+
+                // keep track of the product of the pair
+                int product = bestPair[0] * bestPair[1];
+
+                // when the numbers multiply to number, we have the closest pair
+                while (product != number)
                 {
-                    for (int j = 1; j <= number; j++)
+                    if (product > number)
                     {
-                        Console.WriteLine(count.ToString());
-                        if (i * j == number)
-                        {
-                            multiples[count,0] = i;
-                            multiples[count, 1] = j;
-                        }
-                        count++;
+                        // if the product is too large
+                        // decrease the first number
+                        bestPair[0] = bestPair[0] - 1;
+                    } else if (product < number)
+                    {
+                        // if the product is too small
+                        // increase the second number
+                        bestPair[1] = bestPair[1] + 1;
                     }
+
+                    // recalculate the product
+                    product = bestPair[0] * bestPair[1];
                 }
 
-                int diff = multiples[0,0] - multiples[0,1];
-                int[] bestPair = new int[2];
-                bestPair[0] = multiples[0, 0];
-                bestPair[1] = multiples[0, 1];
-                int bound0 = multiples.GetUpperBound(0);
-                int bound1 = multiples.GetUpperBound(1);
-                for (int i = 0; i <= multiples.GetLength(0) -1; i++)
-                {
-                     int diffCur = multiples[i, 0] - multiples[i, 1];
-                    if(diffCur < diff)
-                    {
-                        bestPair[0] = multiples[i, 0];
-                        bestPair[1] = multiples[i, 1];
-                    }
-                }
                 equasionBox.Text = bestPair[0] + " x " + bestPair[1];
             }
         }
